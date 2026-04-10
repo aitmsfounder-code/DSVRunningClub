@@ -1,4 +1,4 @@
-// ===== DSV Run Together - Main App JS =====
+// ===== Running Club - Main App JS =====
 
 // ==========================================
 // Supabase Config

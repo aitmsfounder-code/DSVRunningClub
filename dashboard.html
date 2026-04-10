@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - DSV Running Club</title>
-    <meta name="description" content="Dashboard สรุปยอดจองเสื้อวิ่ง DSV Running Club — ดูสถิติแบบ real-time">
+    <title>Dashboard - Running Club</title>
+    <meta name="description" content="Dashboard สรุปยอดจองเสื้อวิ่ง Running Club — ดูสถิติแบบ real-time">
     <meta name="theme-color" content="#1a2744">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,7 +387,7 @@
             ws['!cols'] = colWidths;
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Orders');
-            XLSX.writeFile(wb, `DSV_Orders_${new Date().toISOString().slice(0,10)}.xlsx`);
+            XLSX.writeFile(wb, `RunningClub_Orders_${new Date().toISOString().slice(0,10)}.xlsx`);
             showToast('Export Excel สำเร็จ!');
         }
 
