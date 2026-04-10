@@ -1175,6 +1175,102 @@ select.form-control {
     }
 }
 
+/* ===== Size Grid (Order Form) ===== */
+.size-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.size-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.85rem;
+    background: var(--gray-100);
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+.size-row.active {
+    background: rgba(232, 131, 42, 0.08);
+    border-color: var(--orange);
+}
+.size-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.size-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 2.5rem;
+    color: var(--navy);
+}
+.size-measure {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+}
+.size-qty-control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.size-qty-control .qty-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gray-300);
+    background: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-400);
+    transition: all 0.15s;
+    padding: 0;
+}
+.size-qty-control .qty-btn:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+}
+.size-qty-control .qty-btn-plus {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+}
+.size-qty-control .qty-btn-plus:hover {
+    background: #d0741f;
+}
+.qty-display {
+    min-width: 1.8rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy);
+}
+.preview-total {
+    border-top: 2px solid var(--orange);
+    padding-top: 0.75rem !important;
+    margin-top: 0.25rem;
+    font-weight: 700;
+    color: var(--orange) !important;
+}
+.preview-total span {
+    color: var(--orange) !important;
+}
+
+/* Form hint for phone validation */
+.form-hint {
+    font-size: 0.78rem;
+    margin-top: 0.3rem;
+    display: block;
+    min-height: 1.1em;
+}
+.hint-error { color: #ef4444; }
+.hint-success { color: #22c55e; }
+
 /* ===== Toast Notification ===== */
 .toast {
     position: fixed;
