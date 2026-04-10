@@ -34,7 +34,7 @@
         .results-empty {
             text-align: center;
             padding: 3rem 1rem;
-            color: rgba(255,255,255,0.5);
+            color: var(--gray-400);
         }
         .results-empty svg {
             width: 64px;
@@ -44,15 +44,16 @@
         }
 
         .order-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #fff;
+            border: 1px solid var(--gray-200);
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1.25rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
             transition: border-color 0.2s;
         }
         .order-card:hover {
-            border-color: rgba(232, 131, 42, 0.4);
+            border-color: var(--orange);
         }
 
         .order-card-header {
@@ -67,11 +68,11 @@
             font-size: 1.1rem;
             font-weight: 600;
             margin: 0;
-            color: #fff;
+            color: var(--navy);
         }
         .order-card-header .order-meta {
             font-size: 0.85rem;
-            color: rgba(255,255,255,0.5);
+            color: var(--gray-400);
             margin-top: 0.25rem;
         }
         .order-card-header .order-meta span {
@@ -81,14 +82,14 @@
         .order-items {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 1rem;
         }
         .order-item-row {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            background: rgba(255,255,255,0.04);
+            background: var(--gray-100);
             border-radius: 8px;
             padding: 0.5rem 0.75rem;
         }
@@ -104,16 +105,16 @@
             font-size: 0.9rem;
         }
         .order-item-info .item-label {
-            color: #fff;
+            color: var(--navy);
             font-weight: 500;
         }
         .order-item-info .item-detail {
-            color: rgba(255,255,255,0.55);
+            color: var(--gray-400);
             font-size: 0.82rem;
         }
         .order-item-qty {
             font-weight: 600;
-            color: #e8832a;
+            color: var(--orange);
             white-space: nowrap;
         }
 
@@ -124,28 +125,28 @@
             gap: 1rem;
             flex-wrap: wrap;
             padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            border-top: 1px solid var(--gray-200);
         }
         .order-total {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #f0c040;
+            color: var(--orange);
         }
 
         /* Slip area */
         .slip-section {
             margin-top: 1rem;
             padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            border-top: 1px solid var(--gray-200);
         }
         .slip-section-title {
             font-size: 0.85rem;
             font-weight: 500;
-            color: rgba(255,255,255,0.6);
+            color: var(--gray-400);
             margin-bottom: 0.75rem;
         }
         .slip-upload-area {
-            border: 2px dashed rgba(255,255,255,0.15);
+            border: 2px dashed var(--gray-300);
             border-radius: 10px;
             padding: 1.5rem;
             text-align: center;
@@ -153,9 +154,10 @@
             transition: border-color 0.2s, background 0.2s;
             position: relative;
             overflow: hidden;
+            background: var(--gray-100);
         }
         .slip-upload-area:hover {
-            border-color: #e8832a;
+            border-color: var(--orange);
             background: rgba(232, 131, 42, 0.05);
         }
         .slip-upload-area.uploading {
@@ -170,7 +172,7 @@
         }
         .slip-preview-empty p {
             margin: 0;
-            color: rgba(255,255,255,0.45);
+            color: var(--gray-400);
             font-size: 0.85rem;
         }
         .slip-preview-empty .slip-hint {
@@ -222,14 +224,14 @@
             border-radius: 50px;
         }
         .btn-change-slip {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--gray-100);
+            color: var(--gray-400);
+            border: 1px solid var(--gray-300);
             position: relative;
             overflow: hidden;
         }
         .btn-change-slip:hover {
-            background: rgba(255,255,255,0.15);
+            background: var(--gray-200);
         }
         .btn-change-slip input[type="file"] {
             position: absolute;
@@ -242,8 +244,8 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-top-color: #e8832a;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--orange);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             margin-right: 0.5rem;
