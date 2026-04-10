@@ -289,13 +289,23 @@
                     }).join('<br>');
                 }
                 const tqty = o.total_quantity || 0;
-                return `<tr data-search="${o.name} ${o.phone} ${(o.items||[]).map(it=>`${it.color} ${it.collar_type||''} ${it.sleeve_type} ${it.size}`).join(' ')} ${o.status||''}">
+                const statusLink = `status.html?q=${encodeURIComponent(o.name)}`;
+                const st = o.status || 'รับออเดอร์';
+                let actionHtml = '';
+                if (st === 'รับออเดอร์') {
+                    actionHtml = `<a href="${statusLink}" class="row-action-btn row-action-pay">แจ้งชำระเงิน</a>`;
+                } else if (st === 'แจ้งชำระค่าเสื้อ') {
+                    actionHtml = `<a href="${statusLink}" class="row-action-btn row-action-pending">รอตรวจสอบ</a>`;
+                } else {
+                    actionHtml = `<a href="${statusLink}" class="row-action-btn row-action-done">ดูรายละเอียด</a>`;
+                }
+                return `<tr class="clickable-row" data-href="${statusLink}" data-search="${o.name} ${o.phone} ${(o.items||[]).map(it=>`${it.color} ${it.collar_type||''} ${it.sleeve_type} ${it.size}`).join(' ')} ${st}">
                     <td>${i + 1}</td>
                     <td><strong>${o.name}</strong></td>
                     <td>${o.phone || '-'}</td>
                     <td>${itemsHtml}</td>
                     <td>${tqty} ตัว<br><small style="color:var(--orange)">${(tqty * PRICE_PER_SHIRT).toLocaleString()}.-</small></td>
-                    <td>${statusBadge(o.status)}</td>
+                    <td>${statusBadge(st)}<br>${actionHtml}</td>
                     <td>${date}</td>
                 </tr>`;
             }).join('');
@@ -390,6 +400,16 @@
             XLSX.writeFile(wb, `RunningClub_Orders_${new Date().toISOString().slice(0,10)}.xlsx`);
             showToast('Export Excel สำเร็จ!');
         }
+
+        // Clickable rows
+        document.getElementById('ordersTableBody').addEventListener('click', function(e) {
+            // Don't navigate if clicking on a link/button directly
+            if (e.target.closest('a')) return;
+            const row = e.target.closest('.clickable-row');
+            if (row && row.dataset.href) {
+                window.location.href = row.dataset.href;
+            }
+        });
 
         // Load on page ready
         loadDashboard();

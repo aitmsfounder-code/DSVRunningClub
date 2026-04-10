@@ -1507,6 +1507,38 @@ select.form-control {
     margin-bottom: 0.5rem;
 }
 
+/* ===== Clickable Table Rows ===== */
+.clickable-row {
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.clickable-row:hover {
+    background: rgba(232, 131, 42, 0.06) !important;
+}
+.row-action-btn {
+    display: inline-block;
+    margin-top: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+.row-action-btn:hover { opacity: 0.8; }
+.row-action-pay {
+    background: var(--orange);
+    color: #fff;
+}
+.row-action-pending {
+    background: rgba(232, 131, 42, 0.15);
+    color: #c06a18;
+}
+.row-action-done {
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+}
+
 /* ===== Status Badges ===== */
 .badge-status {
     display: inline-block;

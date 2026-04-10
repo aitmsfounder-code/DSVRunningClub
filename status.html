@@ -358,6 +358,16 @@
             if (e.key === 'Enter') searchOrders();
         });
 
+        // Auto-search from URL param ?q=name
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const q = params.get('q');
+            if (q) {
+                document.getElementById('searchInput').value = q;
+                searchOrders();
+            }
+        })();
+
         async function searchOrders() {
             const term = document.getElementById('searchInput').value.trim();
             if (!term) {
