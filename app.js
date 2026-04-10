@@ -3,8 +3,8 @@
 // ==========================================
 // Supabase Config - ใส่ URL และ anon key ตรงนี้
 // ==========================================
-const SUPABASE_URL = ''; // ← ใส่ Supabase Project URL
-const SUPABASE_ANON_KEY = ''; // ← ใส่ Supabase anon/public key
+const SUPABASE_URL = 'https://dbeifdqpsmfbsjhckank.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_2B1zgph7j1q1ypLRJi1PGw_tOirzbZj';
 
 // Helper: Supabase REST API fetch
 async function supabaseFetch(table, options = {}) {
