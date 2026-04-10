@@ -173,6 +173,8 @@
                         status: o.status || 'รับออเดอร์',
                         slip_url: o.slip_url || '',
                         timestamp: o.created_at,
+                        slip_uploaded_at: o.slip_uploaded_at || null,
+                        confirmed_at: o.confirmed_at || null,
                     }));
                     renderDashboard(orders);
                     return;
@@ -347,28 +349,42 @@
 
         // ===== Export Excel =====
         let allOrdersData = []; // stored for export
+        function fmtDate(ts) {
+            if (!ts) return '-';
+            return new Date(ts).toLocaleDateString('th-TH', {
+                day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
         function exportExcel() {
             if (!allOrdersData.length) { showToast('ไม่มีข้อมูลให้ export', 'error'); return; }
-            const rows = allOrdersData.map((o, i) => {
-                const items = (o.items || []).map(it =>
-                    `${it.color || ''} ${it.collar_type || ''} ${it.sleeve_type || ''} ${it.size} x${it.quantity}`
-                ).join(', ');
-                const tqty = o.total_quantity || 0;
-                const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString('th-TH', {
-                    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                }) : '-';
-                return {
-                    '#': i + 1,
-                    'ชื่อ': o.name,
-                    'เบอร์โทร': o.phone || '-',
-                    'รายการเสื้อ': items,
-                    'จำนวน (ตัว)': tqty,
-                    'ราคา (บาท)': tqty * PRICE_PER_SHIRT,
-                    'สถานะ': o.status || 'รับออเดอร์',
-                    'วันที่จอง': date,
-                };
+            // 1 shirt = 1 row (expand items)
+            const rows = [];
+            let rowNum = 0;
+            allOrdersData.forEach(o => {
+                const items = o.items || [];
+                items.forEach(it => {
+                    for (let q = 0; q < it.quantity; q++) {
+                        rowNum++;
+                        rows.push({
+                            '#': rowNum,
+                            'ชื่อ': o.name,
+                            'เบอร์โทร': o.phone || '-',
+                            'สี': it.color || '',
+                            'คอ': it.collar_type || 'คอวี',
+                            'ชนิดเสื้อ': it.sleeve_type || '',
+                            'ไซส์': it.size,
+                            'สถานะ': o.status || 'รับออเดอร์',
+                            'วันที่จอง': fmtDate(o.timestamp),
+                            'วันที่อัพโหลดสลิป': fmtDate(o.slip_uploaded_at),
+                            'วันที่ admin confirm': fmtDate(o.confirmed_at),
+                        });
+                    }
+                });
             });
             const ws = XLSX.utils.json_to_sheet(rows);
+            // Auto column width
+            const colWidths = Object.keys(rows[0] || {}).map(k => ({ wch: Math.max(k.length * 2, 12) }));
+            ws['!cols'] = colWidths;
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Orders');
             XLSX.writeFile(wb, `DSV_Orders_${new Date().toISOString().slice(0,10)}.xlsx`);

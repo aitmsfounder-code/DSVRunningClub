@@ -514,7 +514,7 @@
                 await supabaseFetch('orders', {
                     method: 'PATCH',
                     filters: { 'id': `eq.${orderId}` },
-                    body: { status: 'ชำระแล้ว' },
+                    body: { status: 'ชำระแล้ว', confirmed_at: new Date().toISOString() },
                 });
                 showToast('อนุมัติเรียบร้อย');
                 loadAdminOrders();

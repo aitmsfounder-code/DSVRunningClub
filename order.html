@@ -486,7 +486,7 @@
                 await supabaseFetch('orders', {
                     method: 'PATCH',
                     filters: { 'id': `eq.${orderId}` },
-                    body: { slip_url: slipUrl, status: 'แจ้งชำระค่าเสื้อ' },
+                    body: { slip_url: slipUrl, status: 'แจ้งชำระค่าเสื้อ', slip_uploaded_at: new Date().toISOString() },
                 });
                 btn.textContent = 'อัพโหลดสำเร็จ!';
                 btn.style.background = '#22c55e';
