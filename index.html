@@ -19,7 +19,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
-                <span class="logo-r">D</span> DSV Running Club
+                <span class="logo-r">R</span> Running Club
             </a>
             <button class="nav-toggle" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
@@ -35,13 +35,21 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <div class="hero-slideshow" id="heroSlideshow">
+            <img src="images/short-sleeve-navy.jpg" class="hero-slide active" alt="">
+            <img src="images/short-sleeve-white.jpg" class="hero-slide" alt="">
+            <img src="images/sleeveless-navy.jpg" class="hero-slide" alt="">
+            <img src="images/sleeveless-white.jpg" class="hero-slide" alt="">
+            <img src="images/tank-top-navy.jpg" class="hero-slide" alt="">
+            <img src="images/tank-top-white.jpg" class="hero-slide" alt="">
+        </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title">
-                <span class="hero-sub">DSV Running Club</span>
+                <span class="hero-sub">Running Club</span>
                 เสื้อชมรมวิ่ง 2026
             </h1>
-            <p class="hero-desc">สั่งจองเสื้อวิ่งสุดพิเศษของชมรม DSV Running Club<br>มี 3 แบบ 2 สี ให้เลือก</p>
+            <p class="hero-desc">สั่งจองเสื้อวิ่งสุดพิเศษของชมรม<br>มี 3 แบบ 2 สี ให้เลือก</p>
             <div class="hero-badges">
                 <span class="badge">ตัดยอด 22 เม.ย. 2569</span>
                 <span class="badge badge-accent">คาดว่าได้รับ 29 เม.ย. - 7 พ.ค.</span>
@@ -225,8 +233,8 @@
         <div class="container">
             <div class="footer-content">
                 <div>
-                    <div class="footer-logo"><span class="logo-r">D</span> DSV Running Club</div>
-                    <p>DSV Running Club - ชมรมวิ่ง</p>
+                    <div class="footer-logo"><span class="logo-r">R</span> Running Club</div>
+                    <p>Running Club - ชมรมวิ่ง</p>
                 </div>
                 <div class="footer-links">
                     <a href="index.html">หน้าแรก</a>
@@ -236,11 +244,23 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                &copy; 2026 DSV Running Club. All rights reserved.
+                &copy; 2026 Running Club. All rights reserved.
             </div>
         </div>
     </footer>
 
     <script src="app.js"></script>
+    <script>
+        // Hero slideshow
+        (function() {
+            const slides = document.querySelectorAll('.hero-slide');
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 4000);
+        })();
+    </script>
 </body>
 </html>
