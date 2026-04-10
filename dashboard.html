@@ -148,25 +148,23 @@
                         select: '*',
                         order: 'created_at.desc',
                     });
-                    if (data && data.length) {
-                        // Map Supabase fields to match existing render logic
-                        orders = data.map(o => ({
-                            name: o.name,
-                            color: o.color,
-                            sleeve: o.sleeve_type,
-                            size: o.size,
-                            quantity: o.quantity,
-                            timestamp: o.created_at,
-                        }));
-                        renderDashboard(orders);
-                        return;
-                    }
+                    // Use Supabase data even if empty (means records were deleted)
+                    orders = (data || []).map(o => ({
+                        name: o.name,
+                        color: o.color,
+                        sleeve: o.sleeve_type,
+                        size: o.size,
+                        quantity: o.quantity,
+                        timestamp: o.created_at,
+                    }));
+                    renderDashboard(orders);
+                    return;
                 } catch (err) {
                     console.warn('Supabase load failed, using localStorage:', err);
                 }
             }
 
-            // Fallback to localStorage
+            // Fallback to localStorage (only if Supabase not configured or fails)
             orders = JSON.parse(localStorage.getItem('dsv_orders') || '[]');
             renderDashboard(orders);
         }
