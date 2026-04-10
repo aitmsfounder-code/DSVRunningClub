@@ -266,9 +266,10 @@
                 if (items.length > 0) {
                     itemsHtml = items.map(it => {
                         const c = it.color || o.color || '';
+                        const collar = it.collar_type ? it.collar_type + ' ' : '';
                         const s = it.sleeve_type || o.sleeve || '';
                         const badge = c === 'น้ำเงิน' ? 'badge-navy' : 'badge-white-color';
-                        return `<span class="badge-sm ${badge}">${c}</span> ${s} ${it.size} x${it.quantity}`;
+                        return `<span class="badge-sm ${badge}">${c}</span> ${collar}${s} ${it.size} x${it.quantity}`;
                     }).join('<br>');
                 }
                 const tqty = o.total_quantity || 0;

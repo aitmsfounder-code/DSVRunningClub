@@ -79,6 +79,15 @@
                     </div>
                 </div>
 
+                <!-- Collar Type -->
+                <div class="form-group">
+                    <label>แบบคอเสื้อ</label>
+                    <div class="sleeve-options" id="collarOptions">
+                        <button type="button" class="sleeve-btn active" data-value="คอวี">คอวี</button>
+                        <button type="button" class="sleeve-btn" data-value="คอกลม">คอกลม</button>
+                    </div>
+                </div>
+
                 <!-- Sleeve Type -->
                 <div class="form-group">
                     <label>แบบแขนเสื้อ</label>
@@ -202,12 +211,22 @@
         // Cart items
         let cart = [];
         let addQty = 1;
+        let selectedCollar = 'คอวี';
         let selectedSleeve = 'แขนสั้น';
 
-        // ===== Sleeve Buttons =====
-        document.querySelectorAll('.sleeve-btn').forEach(btn => {
+        // ===== Collar Buttons =====
+        document.querySelectorAll('#collarOptions .sleeve-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.sleeve-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('#collarOptions .sleeve-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedCollar = btn.dataset.value;
+            });
+        });
+
+        // ===== Sleeve Buttons =====
+        document.querySelectorAll('#sleeveOptions .sleeve-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#sleeveOptions .sleeve-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedSleeve = btn.dataset.value;
                 updatePreviewImage();
@@ -256,26 +275,27 @@
         // ===== Add Item to Cart =====
         function addItemToCart() {
             const color = getSelectedColor();
+            const collar = selectedCollar;
             const sleeve = selectedSleeve;
             const size = document.getElementById('addSize').value;
             const qty = addQty;
 
-            // Check duplicate
-            const key = `${color}|${sleeve}|${size}`;
+            // Check duplicate (color + collar + sleeve + size)
+            const key = `${color}|${collar}|${sleeve}|${size}`;
             const existing = cart.find(c => c.key === key);
             if (existing) {
                 showToast('รายการนี้มีอยู่แล้ว — ลบออกก่อนแล้วเพิ่มใหม่', 'error');
                 return;
             }
 
-            cart.push({ key, color, sleeve_type: sleeve, size, quantity: qty });
+            cart.push({ key, color, collar_type: collar, sleeve_type: sleeve, size, quantity: qty });
 
             // Reset qty
             addQty = 1;
             document.getElementById('addQty').textContent = 1;
 
             renderCart();
-            showToast(`เพิ่ม ${color} ${sleeve} ไซส์ ${size} x${qty} แล้ว`);
+            showToast(`เพิ่ม ${color} ${collar} ${sleeve} ไซส์ ${size} x${qty} แล้ว`);
         }
 
         // ===== Remove Item from Cart =====
@@ -317,7 +337,7 @@
                     <div class="cart-item-info">
                         <div class="cart-item-title">
                             <span class="badge-sm ${colorClass}">${item.color}</span>
-                            ${item.sleeve_type}
+                            ${item.collar_type || 'คอวี'} ${item.sleeve_type}
                         </div>
                         <div class="cart-item-detail">
                             ไซส์ <strong>${item.size}</strong> &times; ${item.quantity} ตัว
@@ -363,6 +383,7 @@
             const totalQty = cart.reduce((s, c) => s + c.quantity, 0);
             const items = cart.map(c => ({
                 color: c.color,
+                collar_type: c.collar_type,
                 sleeve_type: c.sleeve_type,
                 size: c.size,
                 quantity: c.quantity,
@@ -395,7 +416,7 @@
             // Success summary
             document.getElementById('successSummary').innerHTML = `
                 <strong>${name}</strong> | ${phone}<br>
-                ${items.map(it => `${it.color} ${it.sleeve_type} ไซส์ ${it.size} x${it.quantity}`).join('<br>')}
+                ${items.map(it => `${it.color} ${it.collar_type} ${it.sleeve_type} ไซส์ ${it.size} x${it.quantity}`).join('<br>')}
                 <br><strong>รวม ${totalQty} ตัว = ${(totalQty * PRICE_PER_SHIRT).toLocaleString()} บาท</strong>
             `;
 
