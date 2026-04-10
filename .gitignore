@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Don't commit Apps Script source (it lives in Google, not in the web deploy)
+# google-apps-script.js  ← uncomment ถ้าไม่ต้องการเก็บใน repo
+
+# Backup files
+*.bak
+*.tmp
+แบบเสื้อ/

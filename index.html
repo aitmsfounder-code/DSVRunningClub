@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSV Run Together - สั่งจองเสื้อชมรมวิ่ง</title>
+    <meta name="description" content="สั่งจองเสื้อวิ่งชมรม DSV Run Together — เลือกสี เลือกแบบ สั่งง่ายผ่านเว็บ">
+    <meta property="og:title" content="DSV Run Together - สั่งจองเสื้อชมรมวิ่ง">
+    <meta property="og:description" content="สั่งจองเสื้อวิ่งชมรม DSV Run Together — น้ำเงิน/ขาว, แขนสั้น/แขนกุด/กล้าม">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#1a2744">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-r">R</span> RUN TOGETHER
+            </a>
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link active">หน้าแรก</a></li>
+                <li><a href="order.html" class="nav-link">สั่งจองเสื้อ</a></li>
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="hero-sub">DSV Run Together</span>
+                เสื้อชมรมวิ่ง 2026
+            </h1>
+            <p class="hero-desc">สั่งจองเสื้อวิ่งสุดพิเศษของชมรม DSV Run Together<br>มี 3 แบบ 2 สี ให้เลือก</p>
+            <div class="hero-badges">
+                <span class="badge">ตัดยอด 22 เม.ย. 2569</span>
+                <span class="badge badge-accent">คาดว่าได้รับ 29 เม.ย. - 7 พ.ค.</span>
+            </div>
+            <a href="order.html" class="btn btn-primary btn-lg">สั่งจองเลย</a>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="section" id="timeline">
+        <div class="container">
+            <h2 class="section-title">กำหนดการ</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">1</div>
+                    <div class="timeline-content">
+                        <h3>เปิดรับออเดอร์</h3>
+                        <p>สั่งจองผ่านเว็บไซต์หรือ LINE กลุ่ม</p>
+                        <span class="timeline-date">วันนี้ - 22 เม.ย. 2569</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">2</div>
+                    <div class="timeline-content">
+                        <h3>ตัดยอดออเดอร์</h3>
+                        <p>ปิดรับการสั่งจอง ตรวจสอบจำนวน</p>
+                        <span class="timeline-date">22 เม.ย. 2569</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">3</div>
+                    <div class="timeline-content">
+                        <h3>รวบรวมเงิน & สั่งผลิต</h3>
+                        <p>รวบรวมเงินให้เสร็จสิ้น สรุปยอดพร้อม order ไปทางร้าน</p>
+                        <span class="timeline-date">24 เม.ย. 2569 (ก่อน 16:00)</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">4</div>
+                    <div class="timeline-content">
+                        <h3>รับเสื้อ</h3>
+                        <p>คาดว่าจะได้รับเสื้อเรียบร้อย</p>
+                        <span class="timeline-date">29 เม.ย. - 7 พ.ค. 2569</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="section section-dark" id="products">
+        <div class="container">
+            <h2 class="section-title">รูปแบบเสื้อ</h2>
+            <p class="section-subtitle">2 สี &times; 3 แบบแขน = 6 แบบให้เลือก</p>
+
+            <!-- Sleeve type tabs -->
+            <div class="tab-group">
+                <button class="tab active" onclick="filterProducts('all', this)">ทั้งหมด</button>
+                <button class="tab" onclick="filterProducts('short-sleeve', this)">แขนสั้น</button>
+                <button class="tab" onclick="filterProducts('sleeveless', this)">แขนกุด</button>
+                <button class="tab" onclick="filterProducts('tank-top', this)">กล้าม</button>
+            </div>
+
+            <div class="product-grid" id="productGrid">
+                <!-- Short Sleeve Navy -->
+                <div class="product-card" data-type="short-sleeve">
+                    <div class="product-image">
+                        <img src="images/short-sleeve-navy.jpg" alt="เสื้อแขนสั้น สีน้ำเงิน" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge navy">สีน้ำเงิน</span>
+                        <h3>เสื้อแขนสั้น</h3>
+                        <p>Short Sleeve - Navy</p>
+                    </div>
+                </div>
+
+                <!-- Short Sleeve White -->
+                <div class="product-card" data-type="short-sleeve">
+                    <div class="product-image">
+                        <img src="images/short-sleeve-white.jpg" alt="เสื้อแขนสั้น สีขาว" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge white">สีขาว</span>
+                        <h3>เสื้อแขนสั้น</h3>
+                        <p>Short Sleeve - White</p>
+                    </div>
+                </div>
+
+                <!-- Sleeveless Navy -->
+                <div class="product-card" data-type="sleeveless">
+                    <div class="product-image">
+                        <img src="images/sleeveless-navy.jpg" alt="เสื้อแขนกุด สีน้ำเงิน" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge navy">สีน้ำเงิน</span>
+                        <h3>เสื้อแขนกุด</h3>
+                        <p>Sleeveless - Navy</p>
+                    </div>
+                </div>
+
+                <!-- Sleeveless White -->
+                <div class="product-card" data-type="sleeveless">
+                    <div class="product-image">
+                        <img src="images/sleeveless-white.jpg" alt="เสื้อแขนกุด สีขาว" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge white">สีขาว</span>
+                        <h3>เสื้อแขนกุด</h3>
+                        <p>Sleeveless - White</p>
+                    </div>
+                </div>
+
+                <!-- Tank Top Navy -->
+                <div class="product-card" data-type="tank-top">
+                    <div class="product-image">
+                        <img src="images/tank-top-navy.jpg" alt="เสื้อกล้าม สีน้ำเงิน" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge navy">สีน้ำเงิน</span>
+                        <h3>เสื้อกล้าม</h3>
+                        <p>Tank Top - Navy</p>
+                    </div>
+                </div>
+
+                <!-- Tank Top White -->
+                <div class="product-card" data-type="tank-top">
+                    <div class="product-image">
+                        <img src="images/tank-top-white.jpg" alt="เสื้อกล้าม สีขาว" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-badge white">สีขาว</span>
+                        <h3>เสื้อกล้าม</h3>
+                        <p>Tank Top - White</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-top: 2.5rem;">
+                <a href="order.html" class="btn btn-primary btn-lg">สั่งจองเสื้อ</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Size Guide Section -->
+    <section class="section" id="sizes">
+        <div class="container">
+            <h2 class="section-title">ไซส์เสื้อ</h2>
+            <div class="size-table-wrapper">
+                <table class="size-table">
+                    <thead>
+                        <tr>
+                            <th>ไซส์</th>
+                            <th>รอบอก (นิ้ว)</th>
+                            <th>ยาว (นิ้ว)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>XS</td><td>34</td><td>25</td></tr>
+                        <tr><td>S</td><td>36</td><td>26</td></tr>
+                        <tr><td>M</td><td>38</td><td>27</td></tr>
+                        <tr><td>L</td><td>40</td><td>28</td></tr>
+                        <tr><td>XL</td><td>42</td><td>29</td></tr>
+                        <tr><td>2XL</td><td>44</td><td>30</td></tr>
+                        <tr><td>3XL</td><td>46</td><td>31</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="size-note">* ไซส์อาจแตกต่างกันเล็กน้อยตามการวัดจริง ทางร้านจะยืนยันอีกครั้ง</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo"><span class="logo-r">R</span> RUN TOGETHER</div>
+                    <p>DSV Run Together - ชมรมวิ่ง</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">หน้าแรก</a>
+                    <a href="order.html">สั่งจองเสื้อ</a>
+                    <a href="dashboard.html">Dashboard</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 DSV Run Together. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

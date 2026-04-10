@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สั่งจองเสื้อ - DSV Run Together</title>
+    <meta name="description" content="กรอกฟอร์มสั่งจองเสื้อวิ่ง DSV Run Together — เลือกสี แบบแขน ไซส์ ง่ายๆ">
+    <meta name="theme-color" content="#1a2744">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-r">R</span> RUN TOGETHER
+            </a>
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">หน้าแรก</a></li>
+                <li><a href="order.html" class="nav-link active">สั่งจองเสื้อ</a></li>
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="form-page">
+        <div class="form-container">
+            <!-- Order Form -->
+            <div class="form-card" id="orderForm">
+                <div class="form-header">
+                    <h1>สั่งจองเสื้อชมรมวิ่ง</h1>
+                    <p>กรอกข้อมูลด้านล่างเพื่อสั่งจองเสื้อ</p>
+                    <p style="font-size: 0.85rem; color: var(--orange); margin-top: 0.5rem;">ตัดยอดออเดอร์: 22 เม.ย. 2569</p>
+                </div>
+
+                <form id="bookingForm" onsubmit="submitOrder(event)">
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label>ชื่อ - นามสกุล <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="เช่น ชยุตพงศ์" required>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="form-group">
+                        <label>สีเสื้อ <span class="required">*</span></label>
+                        <div class="color-options">
+                            <div class="color-option">
+                                <input type="radio" name="color" id="colorNavy" value="น้ำเงิน" required>
+                                <label for="colorNavy">
+                                    <span class="color-swatch swatch-navy"></span>
+                                    น้ำเงิน
+                                </label>
+                            </div>
+                            <div class="color-option">
+                                <input type="radio" name="color" id="colorWhite" value="ขาว">
+                                <label for="colorWhite">
+                                    <span class="color-swatch swatch-white"></span>
+                                    ขาว
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sleeve Type -->
+                    <div class="form-group">
+                        <label>แบบแขนเสื้อ <span class="required">*</span></label>
+                        <select class="form-control" id="sleeve" name="sleeve" required>
+                            <option value="" disabled selected>เลือกแบบแขนเสื้อ</option>
+                            <option value="แขนสั้น">แขนสั้น (Short Sleeve)</option>
+                            <option value="แขนกุด">แขนกุด (Sleeveless)</option>
+                            <option value="กล้าม">กล้าม (Tank Top)</option>
+                        </select>
+                    </div>
+
+                    <!-- Size -->
+                    <div class="form-group">
+                        <label>ไซส์เสื้อ <span class="required">*</span></label>
+                        <select class="form-control" id="size" name="size" required>
+                            <option value="" disabled selected>เลือกไซส์</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="2XL">2XL</option>
+                            <option value="3XL">3XL</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="form-group">
+                        <label>จำนวน <span class="required">*</span></label>
+                        <div class="quantity-control">
+                            <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                            <input type="number" class="qty-input" id="quantity" name="quantity" value="1" min="1" max="10">
+                            <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Preview Image -->
+                    <div class="form-group" id="previewImageGroup" style="display: none;">
+                        <label>ตัวอย่างเสื้อที่เลือก</label>
+                        <div style="border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--gray-200);">
+                            <img id="previewImage" src="" alt="ตัวอย่างเสื้อ" style="width: 100%; display: block;">
+                        </div>
+                    </div>
+
+                    <!-- Order Preview -->
+                    <div class="form-preview" id="orderPreview">
+                        <h4>สรุปออเดอร์</h4>
+                        <div class="preview-item">
+                            <span>ชื่อ</span>
+                            <span id="prevName">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>สี</span>
+                            <span id="prevColor">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>แบบแขน</span>
+                            <span id="prevSleeve">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>ไซส์</span>
+                            <span id="prevSize">-</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>จำนวน</span>
+                            <span id="prevQty">1 ตัว</span>
+                        </div>
+                    </div>
+
+                    <div class="form-submit">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            ยืนยันการจอง
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success Message -->
+            <div class="form-card success-message" id="successMsg">
+                <div class="success-icon">&#10003;</div>
+                <h2>จองเสื้อสำเร็จ!</h2>
+                <p>ระบบบันทึกออเดอร์ของคุณเรียบร้อยแล้ว</p>
+                <p style="font-size: 0.85rem; color: var(--gray-400); margin-top: 1rem;">
+                    ตัดยอด: 22 เม.ย. 2569 | รวบรวมเงิน: 24 เม.ย. (ก่อน 16:00)<br>
+                    คาดว่าจะได้รับเสื้อ: 29 เม.ย. - 7 พ.ค. 2569
+                </p>
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="order.html" class="btn btn-primary">สั่งจองเพิ่ม</a>
+                    <a href="dashboard.html" class="btn btn-outline">ดู Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo"><span class="logo-r">R</span> RUN TOGETHER</div>
+                    <p>DSV Run Together - ชมรมวิ่ง</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">หน้าแรก</a>
+                    <a href="order.html">สั่งจองเสื้อ</a>
+                    <a href="dashboard.html">Dashboard</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 DSV Run Together. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        // Live preview updates
+        const imageMap = {
+            'น้ำเงิน-แขนสั้น': 'images/short-sleeve-navy.jpg',
+            'ขาว-แขนสั้น': 'images/short-sleeve-white.jpg',
+            'น้ำเงิน-แขนกุด': 'images/sleeveless-navy.jpg',
+            'ขาว-แขนกุด': 'images/sleeveless-white.jpg',
+            'น้ำเงิน-กล้าม': 'images/tank-top-navy.jpg',
+            'ขาว-กล้าม': 'images/tank-top-white.jpg'
+        };
+
+        function updatePreview() {
+            const name = document.getElementById('name').value;
+            const color = document.querySelector('input[name="color"]:checked');
+            const sleeve = document.getElementById('sleeve').value;
+            const size = document.getElementById('size').value;
+            const qty = document.getElementById('quantity').value;
+
+            document.getElementById('prevName').textContent = name || '-';
+            document.getElementById('prevColor').textContent = color ? color.value : '-';
+            document.getElementById('prevSleeve').textContent = sleeve || '-';
+            document.getElementById('prevSize').textContent = size || '-';
+            document.getElementById('prevQty').textContent = qty + ' ตัว';
+
+            // Update preview image
+            if (color && sleeve) {
+                const key = color.value + '-' + sleeve;
+                const imgSrc = imageMap[key];
+                if (imgSrc) {
+                    document.getElementById('previewImage').src = imgSrc;
+                    document.getElementById('previewImageGroup').style.display = 'block';
+                }
+            }
+        }
+
+        // Attach listeners
+        document.getElementById('name').addEventListener('input', updatePreview);
+        document.querySelectorAll('input[name="color"]').forEach(r => r.addEventListener('change', updatePreview));
+        document.getElementById('sleeve').addEventListener('change', updatePreview);
+        document.getElementById('size').addEventListener('change', updatePreview);
+        document.getElementById('quantity').addEventListener('input', updatePreview);
+
+        function changeQty(delta) {
+            const input = document.getElementById('quantity');
+            let val = parseInt(input.value) + delta;
+            if (val < 1) val = 1;
+            if (val > 10) val = 10;
+            input.value = val;
+            updatePreview();
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'กำลังบันทึก...';
+
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                color: document.querySelector('input[name="color"]:checked').value,
+                sleeve_type: document.getElementById('sleeve').value,
+                size: document.getElementById('size').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+            };
+
+            let savedToCloud = false;
+
+            try {
+                // Send to Supabase
+                if (isSupabaseConfigured()) {
+                    await supabaseFetch('orders', {
+                        method: 'POST',
+                        body: data,
+                    });
+                    savedToCloud = true;
+                }
+            } catch (err) {
+                console.warn('Supabase save failed, using localStorage:', err);
+            }
+
+            // Also save to localStorage as backup
+            const localData = { ...data, sleeve: data.sleeve_type, timestamp: new Date().toISOString() };
+            const orders = JSON.parse(localStorage.getItem('dsv_orders') || '[]');
+            orders.push(localData);
+            localStorage.setItem('dsv_orders', JSON.stringify(orders));
+
+            // Show success
+            document.getElementById('orderForm').style.display = 'none';
+            document.getElementById('successMsg').classList.add('show');
+
+            if (savedToCloud) {
+                showToast('จองเสื้อสำเร็จ! ข้อมูลบันทึกเรียบร้อย');
+            } else if (!isSupabaseConfigured()) {
+                showToast('จองเสื้อสำเร็จ! (บันทึกในเครื่อง)', 'warning');
+            } else {
+                showToast('จองเสื้อสำเร็จ! (บันทึกสำรองในเครื่อง)', 'warning');
+            }
+        }
+    </script>
+</body>
+</html>
