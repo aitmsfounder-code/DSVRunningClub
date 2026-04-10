@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -24,6 +25,7 @@
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html" class="nav-link">หน้าแรก</a></li>
                 <li><a href="order.html" class="nav-link">สั่งจองเสื้อ</a></li>
+                <li><a href="status.html" class="nav-link">ตรวจสอบสถานะ</a></li>
                 <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
             </ul>
         </div>
@@ -88,7 +90,14 @@
                 <div class="orders-card">
                     <div class="orders-card-header">
                         <h3>รายการจองทั้งหมด</h3>
-                        <span style="font-size: 0.85rem; color: var(--gray-400);" id="orderCount">0 รายการ</span>
+                        <span style="font-size: 0.85rem; color: var(--gray-400);" id="orderCount">0 ออเดอร์</span>
+                    </div>
+                    <!-- Search + Export -->
+                    <div class="table-toolbar">
+                        <input type="text" class="search-input" id="searchInput" placeholder="ค้นหาชื่อ, เบอร์โทร, สี, ไซส์..." oninput="filterTable()">
+                        <button class="btn btn-outline btn-sm" onclick="exportExcel()">
+                            &#128196; Export Excel
+                        </button>
                     </div>
                     <div class="orders-table-wrapper">
                         <table class="orders-table">
@@ -99,6 +108,7 @@
                                     <th>เบอร์โทร</th>
                                     <th>รายการเสื้อ</th>
                                     <th>รวม / ราคา</th>
+                                    <th>สถานะ</th>
                                     <th>วันที่จอง</th>
                                 </tr>
                             </thead>
@@ -129,6 +139,7 @@
                 <div class="footer-links">
                     <a href="index.html">หน้าแรก</a>
                     <a href="order.html">สั่งจองเสื้อ</a>
+                    <a href="status.html">ตรวจสอบสถานะ</a>
                     <a href="dashboard.html">Dashboard</a>
                 </div>
             </div>
@@ -159,6 +170,8 @@
                         items: o.items || [],
                         total_quantity: o.total_quantity || 0,
                         total_price: o.total_price || 0,
+                        status: o.status || 'รับออเดอร์',
+                        slip_url: o.slip_url || '',
                         timestamp: o.created_at,
                     }));
                     renderDashboard(orders);
@@ -197,6 +210,7 @@
         }
 
         function renderDashboard(orders) {
+            allOrdersData = orders; // store for export
             const rows = expandItems(orders);
             const totalQty = rows.reduce((sum, r) => sum + r.quantity, 0);
             const navyQty = rows.filter(r => r.color === 'น้ำเงิน').reduce((s, r) => s + r.quantity, 0);
@@ -253,7 +267,7 @@
             document.getElementById('orderCount').textContent = orders.length + ' ออเดอร์';
 
             if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>ยังไม่มีรายการจอง</p></div></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>ยังไม่มีรายการจอง</p></div></td></tr>';
                 return;
             }
 
@@ -273,12 +287,13 @@
                     }).join('<br>');
                 }
                 const tqty = o.total_quantity || 0;
-                return `<tr>
+                return `<tr data-search="${o.name} ${o.phone} ${(o.items||[]).map(it=>`${it.color} ${it.collar_type||''} ${it.sleeve_type} ${it.size}`).join(' ')} ${o.status||''}">
                     <td>${i + 1}</td>
                     <td><strong>${o.name}</strong></td>
                     <td>${o.phone || '-'}</td>
                     <td>${itemsHtml}</td>
                     <td>${tqty} ตัว<br><small style="color:var(--orange)">${(tqty * PRICE_PER_SHIRT).toLocaleString()}.-</small></td>
+                    <td>${statusBadge(o.status)}</td>
                     <td>${date}</td>
                 </tr>`;
             }).join('');
@@ -318,6 +333,46 @@
                 }
                 el.textContent = current;
             }, 30);
+        }
+
+        // ===== Search/Filter =====
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#ordersTableBody tr[data-search]');
+            rows.forEach(row => {
+                const text = row.dataset.search.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // ===== Export Excel =====
+        let allOrdersData = []; // stored for export
+        function exportExcel() {
+            if (!allOrdersData.length) { showToast('ไม่มีข้อมูลให้ export', 'error'); return; }
+            const rows = allOrdersData.map((o, i) => {
+                const items = (o.items || []).map(it =>
+                    `${it.color || ''} ${it.collar_type || ''} ${it.sleeve_type || ''} ${it.size} x${it.quantity}`
+                ).join(', ');
+                const tqty = o.total_quantity || 0;
+                const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString('th-TH', {
+                    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : '-';
+                return {
+                    '#': i + 1,
+                    'ชื่อ': o.name,
+                    'เบอร์โทร': o.phone || '-',
+                    'รายการเสื้อ': items,
+                    'จำนวน (ตัว)': tqty,
+                    'ราคา (บาท)': tqty * PRICE_PER_SHIRT,
+                    'สถานะ': o.status || 'รับออเดอร์',
+                    'วันที่จอง': date,
+                };
+            });
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+            XLSX.writeFile(wb, `DSV_Orders_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast('Export Excel สำเร็จ!');
         }
 
         // Load on page ready

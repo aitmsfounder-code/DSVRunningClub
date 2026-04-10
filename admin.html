@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - DSV Run Together</title>
+    <meta name="theme-color" content="#1a2744">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Admin-specific styles */
+        .admin-login-section {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .admin-login-card {
+            background: var(--card-bg, #1e2d4a);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .admin-login-card h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        .admin-login-card p {
+            text-align: center;
+            color: var(--gray-400, #94a3b8);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .admin-login-card .form-group {
+            margin-bottom: 1rem;
+        }
+        .admin-login-card label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.35rem;
+            color: var(--gray-300, #cbd5e1);
+        }
+        .admin-login-card .form-control {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            border: 1px solid var(--gray-600, #475569);
+            background: var(--navy-light, #253a5c);
+            color: #fff;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .admin-login-card .form-control:focus {
+            outline: none;
+            border-color: var(--orange, #e8832a);
+        }
+        .login-error {
+            color: #f87171;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .admin-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--gray-500, #64748b);
+            color: var(--gray-300, #cbd5e1);
+            padding: 0.45rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            border-color: #f87171;
+            color: #f87171;
+        }
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+        .filter-tab {
+            padding: 0.45rem 1rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-600, #475569);
+            background: transparent;
+            color: var(--gray-300, #cbd5e1);
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .filter-tab:hover {
+            border-color: var(--orange, #e8832a);
+            color: var(--orange, #e8832a);
+        }
+        .filter-tab.active {
+            background: var(--orange, #e8832a);
+            border-color: var(--orange, #e8832a);
+            color: #fff;
+        }
+        /* Action buttons */
+        .btn-approve {
+            background: #22c55e;
+            color: #fff;
+            border: none;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .btn-approve:hover { opacity: 0.85; }
+        .btn-reject {
+            background: var(--gray-600, #475569);
+            color: var(--gray-300, #cbd5e1);
+            border: none;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .btn-reject:hover { opacity: 0.85; }
+        .action-btns {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .status-text-paid {
+            color: #22c55e;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .status-text-pending {
+            color: var(--gray-400, #94a3b8);
+            font-size: 0.85rem;
+        }
+        /* Slip thumbnail */
+        .slip-thumb {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--gray-600, #475569);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .slip-thumb:hover {
+            transform: scale(1.1);
+            border-color: var(--orange, #e8832a);
+        }
+        .no-slip {
+            color: var(--gray-500, #64748b);
+            font-size: 0.8rem;
+        }
+        /* Slip Modal */
+        .slip-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .slip-modal-overlay.active {
+            display: flex;
+        }
+        .slip-modal-content {
+            position: relative;
+            max-width: 600px;
+            max-height: 90vh;
+            width: 100%;
+        }
+        .slip-modal-content img {
+            width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .slip-modal-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 36px;
+            height: 36px;
+            background: var(--orange, #e8832a);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+        }
+        .slip-modal-close:hover {
+            transform: scale(1.1);
+        }
+        /* Admin table tweaks */
+        .orders-table td {
+            vertical-align: middle;
+        }
+        .admin-page {
+            padding-top: 5rem;
+            padding-bottom: 3rem;
+            min-height: 80vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-r">R</span> RUN TOGETHER
+            </a>
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">หน้าแรก</a></li>
+                <li><a href="order.html" class="nav-link">สั่งจองเสื้อ</a></li>
+                <li><a href="status.html" class="nav-link">ตรวจสอบสถานะ</a></li>
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="admin.html" class="nav-link active">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- STATE 1: Login Form -->
+    <section class="admin-login-section" id="loginSection">
+        <div class="admin-login-card">
+            <h2>Admin Login</h2>
+            <p>เข้าสู่ระบบเพื่อจัดการออเดอร์</p>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="admin@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="รหัสผ่าน" required>
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.75rem;" id="loginBtn">
+                    เข้าสู่ระบบ
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- STATE 2: Admin Dashboard -->
+    <section class="admin-page" id="adminSection" style="display: none;">
+        <div class="container">
+            <div class="admin-header">
+                <div>
+                    <h1>จัดการออเดอร์</h1>
+                    <p style="color: var(--gray-400); font-size: 0.9rem; margin: 0;">ตรวจสลิป อนุมัติการชำระเงิน</p>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()">ออกจากระบบ</button>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterOrders('all', this)">ทั้งหมด</button>
+                <button class="filter-tab" onclick="filterOrders('แจ้งชำระค่าเสื้อ', this)">รอตรวจสลิป</button>
+                <button class="filter-tab" onclick="filterOrders('ชำระแล้ว', this)">ชำระแล้ว</button>
+                <button class="filter-tab" onclick="filterOrders('รับออเดอร์', this)">รับออเดอร์</button>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="orders-section">
+                <div class="orders-card">
+                    <div class="orders-card-header">
+                        <h3>รายการออเดอร์</h3>
+                        <span style="font-size: 0.85rem; color: var(--gray-400);" id="adminOrderCount">0 ออเดอร์</span>
+                    </div>
+                    <div class="orders-table-wrapper">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ชื่อ</th>
+                                    <th>เบอร์โทร</th>
+                                    <th>รายการ</th>
+                                    <th>รวม / ราคา</th>
+                                    <th>สถานะ</th>
+                                    <th>สลิป</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOrdersBody">
+                                <tr>
+                                    <td colspan="8">
+                                        <div class="empty-state">
+                                            <p>กำลังโหลดข้อมูล...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slip Modal -->
+    <div class="slip-modal-overlay" id="slipModal" onclick="closeSlipModal(event)">
+        <div class="slip-modal-content">
+            <button class="slip-modal-close" onclick="closeSlipModal(event, true)">&times;</button>
+            <img id="slipModalImg" src="" alt="สลิปการชำระเงิน">
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo"><span class="logo-r">R</span> RUN TOGETHER</div>
+                    <p>DSV Run Together - ชมรมวิ่ง</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">หน้าแรก</a>
+                    <a href="order.html">สั่งจองเสื้อ</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="admin.html">Admin</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 DSV Run Together. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        const PRICE_PER_SHIRT = 300;
+        let allAdminOrders = [];
+        let currentFilter = 'all';
+
+        // ===== Page Init =====
+        function initAdmin() {
+            if (isAdminLoggedIn()) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                loadAdminOrders();
+            } else {
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('adminSection').style.display = 'none';
+            }
+        }
+
+        // ===== Login =====
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+            const btn = document.getElementById('loginBtn');
+
+            errorEl.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'กำลังเข้าสู่ระบบ...';
+
+            try {
+                await adminLogin(email, password);
+                showToast('เข้าสู่ระบบสำเร็จ');
+                initAdmin();
+            } catch (err) {
+                errorEl.textContent = err.message || 'เข้าสู่ระบบไม่สำเร็จ';
+                errorEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'เข้าสู่ระบบ';
+            }
+        }
+
+        // ===== Logout =====
+        function handleLogout() {
+            adminLogout();
+            showToast('ออกจากระบบแล้ว');
+            initAdmin();
+        }
+
+        // ===== Load Orders =====
+        async function loadAdminOrders() {
+            try {
+                const data = await supabaseFetch('orders', {
+                    method: 'GET',
+                    select: '*',
+                    order: 'created_at.desc',
+                });
+                allAdminOrders = data || [];
+                renderAdminOrders();
+            } catch (err) {
+                console.error('Load orders error:', err);
+                document.getElementById('adminOrdersBody').innerHTML =
+                    '<tr><td colspan="8"><div class="empty-state"><p>โหลดข้อมูลไม่สำเร็จ</p></div></td></tr>';
+            }
+        }
+
+        // ===== Render Orders =====
+        function renderAdminOrders() {
+            const tbody = document.getElementById('adminOrdersBody');
+            const countEl = document.getElementById('adminOrderCount');
+
+            // Apply filter
+            const filtered = currentFilter === 'all'
+                ? allAdminOrders
+                : allAdminOrders.filter(o => (o.status || 'รับออเดอร์') === currentFilter);
+
+            countEl.textContent = filtered.length + ' ออเดอร์';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>ไม่มีรายการ</p></div></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((o, i) => {
+                const items = o.items || [];
+                let itemsHtml = '-';
+                if (items.length > 0) {
+                    itemsHtml = items.map(it => {
+                        const c = it.color || '';
+                        const collar = it.collar_type ? it.collar_type + ' ' : '';
+                        const s = it.sleeve_type || '';
+                        const badge = c === 'น้ำเงิน' ? 'badge-navy' : 'badge-white-color';
+                        return `<span class="badge-sm ${badge}">${c}</span> ${collar}${s} ${it.size} x${it.quantity}`;
+                    }).join('<br>');
+                }
+
+                const tqty = o.total_quantity || 0;
+                const status = o.status || 'รับออเดอร์';
+
+                // Slip column
+                let slipHtml = '<span class="no-slip">-</span>';
+                if (o.slip_url) {
+                    slipHtml = `<img src="${o.slip_url}" class="slip-thumb" alt="สลิป" onclick="openSlipModal('${o.slip_url}')">`;
+                }
+
+                // Action column
+                let actionHtml = '';
+                if (status === 'แจ้งชำระค่าเสื้อ') {
+                    actionHtml = `<div class="action-btns">
+                        <button class="btn-approve" onclick="approveOrder(${o.id})">&#10003; อนุมัติ</button>
+                        <button class="btn-reject" onclick="rejectOrder(${o.id})">&#8617; ส่งกลับ</button>
+                    </div>`;
+                } else if (status === 'ชำระแล้ว') {
+                    actionHtml = '<span class="status-text-paid">&#10003; ชำระแล้ว</span>';
+                } else if (status === 'รับออเดอร์') {
+                    actionHtml = '<span class="status-text-pending">รอสลิป</span>';
+                }
+
+                return `<tr>
+                    <td>${i + 1}</td>
+                    <td><strong>${o.name || '-'}</strong></td>
+                    <td>${o.phone || '-'}</td>
+                    <td>${itemsHtml}</td>
+                    <td>${tqty} ตัว<br><small style="color:var(--orange)">${(tqty * PRICE_PER_SHIRT).toLocaleString()}.-</small></td>
+                    <td>${statusBadge(status)}</td>
+                    <td>${slipHtml}</td>
+                    <td>${actionHtml}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ===== Filter Orders =====
+        function filterOrders(status, btn) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderAdminOrders();
+        }
+
+        // ===== Approve Order =====
+        async function approveOrder(orderId) {
+            try {
+                await supabaseFetch('orders', {
+                    method: 'PATCH',
+                    filters: { 'id': `eq.${orderId}` },
+                    body: { status: 'ชำระแล้ว' },
+                });
+                showToast('อนุมัติเรียบร้อย');
+                loadAdminOrders();
+            } catch (err) {
+                showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+            }
+        }
+
+        // ===== Reject Order =====
+        async function rejectOrder(orderId) {
+            try {
+                await supabaseFetch('orders', {
+                    method: 'PATCH',
+                    filters: { 'id': `eq.${orderId}` },
+                    body: { status: 'รับออเดอร์', slip_url: null },
+                });
+                showToast('ส่งกลับแล้ว — รอสลิปใหม่', 'warning');
+                loadAdminOrders();
+            } catch (err) {
+                showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+            }
+        }
+
+        // ===== Slip Modal =====
+        function openSlipModal(url) {
+            document.getElementById('slipModalImg').src = url;
+            document.getElementById('slipModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSlipModal(e, force) {
+            if (force || e.target === document.getElementById('slipModal')) {
+                document.getElementById('slipModal').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSlipModal(null, true);
+        });
+
+        // ===== Init on page load =====
+        initAdmin();
+    </script>
+</body>
+</html>

@@ -24,6 +24,7 @@
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html" class="nav-link">หน้าแรก</a></li>
                 <li><a href="order.html" class="nav-link active">สั่งจองเสื้อ</a></li>
+                <li><a href="status.html" class="nav-link">ตรวจสอบสถานะ</a></li>
                 <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
             </ul>
         </div>
@@ -159,12 +160,30 @@
                 <h2>จองเสื้อสำเร็จ!</h2>
                 <p>ระบบบันทึกออเดอร์ของคุณเรียบร้อยแล้ว</p>
                 <div id="successSummary" style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-400);"></div>
+
+                <!-- Upload Slip Section -->
+                <div class="slip-upload-section" id="slipSection" style="display:none;">
+                    <div class="form-section-label" style="margin-top: 1.5rem;">แนบสลิปการโอนเงิน</div>
+                    <p style="font-size: 0.82rem; color: var(--gray-400); margin-bottom: 0.75rem;">อัพโหลดภาพสลิปเพื่อยืนยันการชำระเงิน (รูปจะถูกย่อขนาดอัตโนมัติ)</p>
+                    <div class="slip-upload-area" id="slipDropArea" onclick="document.getElementById('slipInput').click()">
+                        <input type="file" id="slipInput" accept="image/*" style="display:none" onchange="previewSlip(this)">
+                        <div id="slipPreview" class="slip-preview-empty">
+                            <span style="font-size: 2rem;">&#128247;</span>
+                            <span>คลิกเพื่อเลือกรูปสลิป</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="uploadSlipBtn" style="margin-top: 0.75rem; width: 100;" onclick="doUploadSlip()" disabled>
+                        อัพโหลดสลิป
+                    </button>
+                </div>
+
                 <p style="font-size: 0.85rem; color: var(--gray-400); margin-top: 1rem;">
                     ตัดยอด: 22 เม.ย. 2569 | รวบรวมเงิน: 24 เม.ย. (ก่อน 16:00)<br>
                     คาดว่าจะได้รับเสื้อ: 29 เม.ย. - 7 พ.ค. 2569
                 </p>
                 <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
                     <a href="order.html" class="btn btn-primary">สั่งจองเพิ่ม</a>
+                    <a href="status.html" class="btn btn-outline">ตรวจสอบสถานะ</a>
                     <a href="dashboard.html" class="btn btn-outline">ดู Dashboard</a>
                 </div>
             </div>
@@ -182,6 +201,7 @@
                 <div class="footer-links">
                     <a href="index.html">หน้าแรก</a>
                     <a href="order.html">สั่งจองเสื้อ</a>
+                    <a href="status.html">ตรวจสอบสถานะ</a>
                     <a href="dashboard.html">Dashboard</a>
                 </div>
             </div>
@@ -398,10 +418,12 @@
             };
 
             let savedToCloud = false;
+            let savedOrderId = null;
             try {
                 if (isSupabaseConfigured()) {
-                    await supabaseFetch('orders', { method: 'POST', body: data });
+                    const result = await supabaseFetch('orders', { method: 'POST', body: data, returnData: true });
                     savedToCloud = true;
+                    if (result && result[0]) savedOrderId = result[0].id;
                 }
             } catch (err) {
                 console.warn('Supabase save failed:', err);
@@ -423,10 +445,57 @@
             document.getElementById('orderForm').style.display = 'none';
             document.getElementById('successMsg').classList.add('show');
 
+            // Show slip upload if saved to cloud
+            if (savedOrderId) {
+                window._currentOrderId = savedOrderId;
+                document.getElementById('slipSection').style.display = 'block';
+            }
+
             if (savedToCloud) {
                 showToast('จองเสื้อสำเร็จ! ข้อมูลบันทึกเรียบร้อย');
             } else {
                 showToast('จองเสื้อสำเร็จ! (บันทึกสำรองในเครื่อง)', 'warning');
+            }
+        }
+
+        // ===== Slip Upload =====
+        function previewSlip(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const preview = document.getElementById('slipPreview');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.innerHTML = `<img src="${e.target.result}" alt="สลิป" style="max-width:100%; max-height:300px; border-radius:8px;">`;
+                document.getElementById('uploadSlipBtn').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function doUploadSlip() {
+            const file = document.getElementById('slipInput').files[0];
+            const orderId = window._currentOrderId;
+            if (!file || !orderId) return;
+
+            const btn = document.getElementById('uploadSlipBtn');
+            btn.disabled = true;
+            btn.textContent = 'กำลังอัพโหลด...';
+
+            try {
+                const slipUrl = await uploadSlip(file, orderId);
+                // Update order with slip URL + status
+                await supabaseFetch('orders', {
+                    method: 'PATCH',
+                    filters: { 'id': `eq.${orderId}` },
+                    body: { slip_url: slipUrl, status: 'แจ้งชำระค่าเสื้อ' },
+                });
+                btn.textContent = 'อัพโหลดสำเร็จ!';
+                btn.style.background = '#22c55e';
+                showToast('อัพโหลดสลิปสำเร็จ! รอ admin ตรวจสอบ');
+            } catch (err) {
+                console.error('Upload failed:', err);
+                btn.disabled = false;
+                btn.textContent = 'ลองอีกครั้ง';
+                showToast('อัพโหลดไม่สำเร็จ — ลองใหม่อีกครั้ง', 'error');
             }
         }
 
