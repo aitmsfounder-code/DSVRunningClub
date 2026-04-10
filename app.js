@@ -231,6 +231,52 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
+// ===== Deadlines =====
+const DEADLINE_ORDER = new Date('2026-04-22T23:59:59+07:00');  // ตัดยอดสั่งจอง
+const DEADLINE_PAYMENT = new Date('2026-04-24T15:59:59+07:00'); // ตัดยอดแจ้งชำระ
+
+function getCountdown(deadline) {
+    const now = new Date();
+    const diff = deadline - now;
+    if (diff <= 0) return null; // expired
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    return { days, hours, mins, secs, total: diff };
+}
+
+function formatCountdown(cd) {
+    if (!cd) return 'หมดเวลาแล้ว';
+    const parts = [];
+    if (cd.days > 0) parts.push(`${cd.days} วัน`);
+    parts.push(`${String(cd.hours).padStart(2,'0')}:${String(cd.mins).padStart(2,'0')}:${String(cd.secs).padStart(2,'0')}`);
+    return parts.join(' ');
+}
+
+function isOrderOpen() { return new Date() < DEADLINE_ORDER; }
+function isPaymentOpen() { return new Date() < DEADLINE_PAYMENT; }
+
+// Start a countdown timer that updates an element
+function startCountdownTimer(elementId, deadline, onExpire) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    function tick() {
+        const cd = getCountdown(deadline);
+        if (!cd) {
+            el.textContent = 'หมดเวลาแล้ว';
+            el.classList.add('countdown-expired');
+            if (onExpire) onExpire();
+            return;
+        }
+        el.textContent = formatCountdown(cd);
+        // Urgent styling when < 24 hours
+        if (cd.total < 86400000) el.classList.add('countdown-urgent');
+        requestAnimationFrame(() => setTimeout(tick, 1000));
+    }
+    tick();
+}
+
 // ===== Toast Notification =====
 function showToast(message, type = 'success') {
     const existing = document.querySelector('.toast');

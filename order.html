@@ -37,7 +37,16 @@
                 <div class="form-header">
                     <h1>สั่งจองเสื้อชมรมวิ่ง</h1>
                     <p>เลือกเสื้อแต่ละแบบ แล้วกด "เพิ่มลงออเดอร์" ได้หลายรายการ</p>
-                    <p style="font-size: 0.85rem; color: var(--orange); margin-top: 0.5rem;">ตัดยอด 22 เม.ย. 2569 | ตัวละ 300 บาท</p>
+                    <p style="font-size: 0.85rem; color: var(--orange); margin-top: 0.5rem;">ตัวละ 300 บาท</p>
+                </div>
+
+                <!-- Countdown -->
+                <div class="countdown-banner" id="orderCountdownBanner">
+                    <div class="countdown-banner-label">
+                        <strong>เหลือเวลาสั่งจอง</strong>
+                        ตัดยอด 22 เม.ย. 2569 เวลา 23:59 น.
+                    </div>
+                    <div class="countdown-timer" id="orderCountdown">--:--:--</div>
                 </div>
 
                 <!-- ===== STEP 1: ข้อมูลผู้สั่ง ===== -->
@@ -163,7 +172,15 @@
 
                 <!-- Upload Slip Section -->
                 <div class="slip-upload-section" id="slipSection" style="display:none;">
-                    <div class="form-section-label" style="margin-top: 1.5rem;">แนบสลิปการโอนเงิน</div>
+                    <!-- Payment countdown -->
+                    <div class="countdown-banner" style="margin-top:1.25rem;" id="paymentCountdownBanner">
+                        <div class="countdown-banner-label">
+                            <strong>เหลือเวลาแจ้งชำระเงิน</strong>
+                            ภายใน 24 เม.ย. 2569 ก่อน 16:00 น.
+                        </div>
+                        <div class="countdown-timer" id="paymentCountdown">--:--:--</div>
+                    </div>
+                    <div class="form-section-label">แนบสลิปการโอนเงิน</div>
                     <div style="background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; text-align: center;">
                         <p style="font-size: 0.82rem; color: var(--gray-400); margin: 0 0 0.35rem;">โอนเงินมาที่</p>
                         <p style="font-size: 0.95rem; font-weight: 700; color: var(--navy); margin: 0;">ธนาคารกสิกรไทย</p>
@@ -457,9 +474,10 @@
             document.getElementById('successMsg').classList.add('show');
 
             // Show slip upload if saved to cloud
-            if (savedOrderId) {
+            if (savedOrderId && isPaymentOpen()) {
                 window._currentOrderId = savedOrderId;
                 document.getElementById('slipSection').style.display = 'block';
+                startCountdownTimer('paymentCountdown', DEADLINE_PAYMENT);
             }
 
             if (savedToCloud) {
@@ -512,6 +530,22 @@
 
         // Init
         updatePreviewImage();
+
+        // Countdown + lock
+        if (!isOrderOpen()) {
+            document.getElementById('orderForm').innerHTML = `
+                <div class="countdown-banner" style="justify-content:center;">
+                    <div style="text-align:center;">
+                        <div class="countdown-banner-label"><strong style="font-size:1.1rem;">ปิดรับสั่งจองแล้ว</strong></div>
+                        <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin-top:0.5rem;">ตัดยอดออเดอร์เมื่อ 22 เม.ย. 2569 เวลา 23:59 น.</p>
+                        <a href="status.html" class="btn btn-primary" style="margin-top:1rem;">ตรวจสอบสถานะออเดอร์</a>
+                    </div>
+                </div>`;
+        } else {
+            startCountdownTimer('orderCountdown', DEADLINE_ORDER, () => {
+                location.reload();
+            });
+        }
     </script>
 </body>
 </html>

@@ -416,6 +416,11 @@
             emptyEl.style.display = 'none';
             cardsEl.style.display = '';
             cardsEl.innerHTML = orders.map(order => renderOrderCard(order)).join('');
+            // Start payment countdowns for each order card
+            orders.forEach(o => {
+                const el = document.getElementById(`payCountdown-${o.id}`);
+                if (el) startCountdownTimer(`payCountdown-${o.id}`, DEADLINE_PAYMENT);
+            });
         }
 
         function renderOrderCard(order) {
@@ -529,9 +534,21 @@
                 `;
             }
 
-            // Default: รับออเดอร์ - show upload area
+            // Default: รับออเดอร์ - show upload area (check deadline)
+            if (!isPaymentOpen()) {
+                return `
+                    <div class="slip-section">
+                        <div class="slip-section-title" style="color:#ef4444;">หมดเวลาแจ้งชำระเงินแล้ว</div>
+                        <p style="font-size:0.82rem; color:var(--gray-400);">ตัดยอดแจ้งชำระเมื่อ 24 เม.ย. 2569 เวลา 16:00 น.</p>
+                    </div>
+                `;
+            }
             return `
                 <div class="slip-section">
+                    <div class="countdown-banner" style="margin-bottom:0.75rem;">
+                        <div class="countdown-banner-label"><strong>เหลือเวลาแจ้งชำระเงิน</strong>ภายใน 24 เม.ย. 2569 ก่อน 16:00 น.</div>
+                        <div class="countdown-timer" id="payCountdown-${orderId}">--:--:--</div>
+                    </div>
                     <div class="slip-section-title">แนบสลิปการชำระเงิน</div>
                     <div style="background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; text-align: center;">
                         <p style="font-size: 0.82rem; color: var(--gray-400); margin: 0 0 0.35rem;">โอนเงินมาที่</p>

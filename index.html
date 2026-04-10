@@ -51,8 +51,12 @@
             </h1>
             <p class="hero-desc">สั่งจองเสื้อวิ่งสุดพิเศษของชมรม<br>มี 3 แบบ 2 สี ให้เลือก</p>
             <div class="hero-badges">
-                <span class="badge">ตัดยอด 22 เม.ย. 2569</span>
+                <span class="badge" id="heroBadgeCountdown">ตัดยอด 22 เม.ย. 2569</span>
                 <span class="badge badge-accent">คาดว่าได้รับ 29 เม.ย. - 7 พ.ค.</span>
+            </div>
+            <div id="heroCountdownWrap" style="margin-top: 0.75rem;">
+                <span style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">เหลือเวลาสั่งจอง</span>
+                <div class="countdown-timer" id="heroCountdown" style="font-size: 1.6rem;">--:--:--</div>
             </div>
             <a href="order.html" class="btn btn-primary btn-lg">สั่งจองเลย</a>
         </div>
@@ -251,6 +255,19 @@
 
     <script src="app.js"></script>
     <script>
+        // Hero countdown
+        if (isOrderOpen()) {
+            startCountdownTimer('heroCountdown', DEADLINE_ORDER, () => {
+                document.getElementById('heroCountdownWrap').innerHTML = '<span style="color:#ef4444; font-weight:700;">ปิดรับสั่งจองแล้ว</span>';
+                document.getElementById('heroBadgeCountdown').textContent = 'ปิดรับสั่งจองแล้ว';
+                document.getElementById('heroBadgeCountdown').style.background = '#ef4444';
+            });
+        } else {
+            document.getElementById('heroCountdownWrap').innerHTML = '<span style="color:#ef4444; font-weight:700; font-size:1.1rem;">ปิดรับสั่งจองแล้ว</span>';
+            document.getElementById('heroBadgeCountdown').textContent = 'ปิดรับสั่งจองแล้ว';
+            document.getElementById('heroBadgeCountdown').style.background = '#ef4444';
+        }
+
         // Hero slideshow
         (function() {
             const slides = document.querySelectorAll('.hero-slide');
