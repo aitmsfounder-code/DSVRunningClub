@@ -342,7 +342,7 @@
 
     <script src="app.js"></script>
     <script>
-        const PRICE_PER_SHIRT = 300;
+        // ใช้ getPriceForSize() + calculateItemsTotal() จาก app.js
 
         const imageMap = {
             'น้ำเงิน-แขนสั้น': 'images/short-sleeve-navy.jpg',
@@ -443,7 +443,7 @@
             // Calculate total
             let totalQty = 0;
             items.forEach(item => totalQty += (item.quantity || 1));
-            const totalPrice = totalQty * PRICE_PER_SHIRT;
+            const totalPrice = calculateItemsTotal(items);
 
             // Render item rows
             const itemsHtml = items.map(item => {
@@ -481,7 +481,7 @@
             })() : '';
 
             const finalTotalPrice = items.length === 0 && order.color
-                ? (order.quantity || 1) * PRICE_PER_SHIRT
+                ? (order.quantity || 1) * getPriceForSize(order.size || 'M')
                 : totalPrice;
 
             // Slip section

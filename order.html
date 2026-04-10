@@ -37,7 +37,7 @@
                 <div class="form-header">
                     <h1>สั่งจองเสื้อชมรมวิ่ง</h1>
                     <p>เลือกเสื้อแต่ละแบบ แล้วกด "เพิ่มลงออเดอร์" ได้หลายรายการ</p>
-                    <p style="font-size: 0.85rem; color: var(--orange); margin-top: 0.5rem;">ตัวละ 300 บาท</p>
+                    <p style="font-size: 0.85rem; color: var(--orange); margin-top: 0.5rem;">ตัวละ 300 บาท (ไซส์ 2XL ขึ้นไป 350 บาท)</p>
                 </div>
 
                 <!-- Countdown -->
@@ -236,7 +236,7 @@
 
     <script src="app.js"></script>
     <script>
-        const PRICE_PER_SHIRT = 300;
+        // ใช้ getPriceForSize() จาก app.js
 
         // Image map
         const imageMap = {
@@ -373,12 +373,14 @@
             countEl.textContent = cart.length;
 
             const totalQty = cart.reduce((s, c) => s + c.quantity, 0);
-            const totalPrice = totalQty * PRICE_PER_SHIRT;
+            const totalPrice = cart.reduce((s, c) => s + c.quantity * getPriceForSize(c.size), 0);
 
             list.innerHTML = cart.map((item, i) => {
                 const imgKey = item.color + '-' + item.sleeve_type;
                 const imgSrc = imageMap[imgKey] || '';
                 const colorClass = item.color === 'น้ำเงิน' ? 'badge-navy' : 'badge-white-color';
+                const unitPrice = getPriceForSize(item.size);
+                const priceTag = PLUS_SIZES.includes(item.size) ? `<small style="opacity:0.7">@${unitPrice}</small> ` : '';
                 return `
                 <div class="cart-item">
                     <img class="cart-item-img" src="${imgSrc}" alt="">
@@ -389,7 +391,7 @@
                         </div>
                         <div class="cart-item-detail">
                             ไซส์ <strong>${item.size}</strong> &times; ${item.quantity} ตัว
-                            <span class="cart-item-price">${(item.quantity * PRICE_PER_SHIRT).toLocaleString()} บาท</span>
+                            <span class="cart-item-price">${priceTag}${(item.quantity * unitPrice).toLocaleString()} บาท</span>
                         </div>
                     </div>
                     <button type="button" class="cart-item-remove" onclick="removeItem(${i})" title="ลบ">&times;</button>
@@ -442,7 +444,7 @@
                 phone,
                 items,
                 total_quantity: totalQty,
-                total_price: totalQty * PRICE_PER_SHIRT,
+                total_price: calculateItemsTotal(items),
             };
 
             let savedToCloud = false;
@@ -467,7 +469,7 @@
             document.getElementById('successSummary').innerHTML = `
                 <strong>${name}</strong> | ${phone}<br>
                 ${items.map(it => `${it.color} ${it.collar_type} ${it.sleeve_type} ไซส์ ${it.size} x${it.quantity}`).join('<br>')}
-                <br><strong>รวม ${totalQty} ตัว = ${(totalQty * PRICE_PER_SHIRT).toLocaleString()} บาท</strong>
+                <br><strong>รวม ${totalQty} ตัว = ${calculateItemsTotal(items).toLocaleString()} บาท</strong>
             `;
 
             document.getElementById('orderForm').style.display = 'none';

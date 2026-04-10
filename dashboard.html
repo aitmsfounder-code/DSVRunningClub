@@ -151,7 +151,7 @@
 
     <script src="app.js"></script>
     <script>
-        const PRICE_PER_SHIRT = 300;
+        // ใช้ getPriceForSize() + calculateItemsTotal() จาก app.js
 
         async function loadDashboard() {
             let orders = [];
@@ -217,7 +217,7 @@
             const totalQty = rows.reduce((sum, r) => sum + r.quantity, 0);
             const navyQty = rows.filter(r => r.color === 'น้ำเงิน').reduce((s, r) => s + r.quantity, 0);
             const whiteQty = rows.filter(r => r.color === 'ขาว').reduce((s, r) => s + r.quantity, 0);
-            const totalRevenue = totalQty * PRICE_PER_SHIRT;
+            const totalRevenue = orders.reduce((s, o) => s + calculateItemsTotal(o.items), 0);
 
             animateCounter('statTotal', totalQty);
             animateCounter('statOrders', orders.length);
@@ -304,7 +304,7 @@
                     <td><strong>${o.name}</strong></td>
                     <td>${o.phone || '-'}</td>
                     <td>${itemsHtml}</td>
-                    <td>${tqty} ตัว<br><small style="color:var(--orange)">${(tqty * PRICE_PER_SHIRT).toLocaleString()}.-</small></td>
+                    <td>${tqty} ตัว<br><small style="color:var(--orange)">${calculateItemsTotal(o.items).toLocaleString()}.-</small></td>
                     <td>${statusBadge(st)}<br>${actionHtml}</td>
                     <td>${date}</td>
                 </tr>`;
@@ -383,6 +383,7 @@
                             'คอ': it.collar_type || 'คอวี',
                             'ชนิดเสื้อ': it.sleeve_type || '',
                             'ไซส์': it.size,
+                            'ราคา/ตัว': getPriceForSize(it.size),
                             'สถานะ': o.status || 'รับออเดอร์',
                             'วันที่จอง': fmtDate(o.timestamp),
                             'วันที่อัพโหลดสลิป': fmtDate(o.slip_uploaded_at),

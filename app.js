@@ -231,6 +231,19 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
+// ===== Pricing =====
+const PRICE_NORMAL = 300;  // 2XS - XL
+const PRICE_PLUS = 350;    // 2XL - 7XL+
+const PLUS_SIZES = ['2XL', '3XL', '4XL', '5XL', '6XL', '7XL', '8XL', '9XL'];
+
+function getPriceForSize(size) {
+    return PLUS_SIZES.includes(size) ? PRICE_PLUS : PRICE_NORMAL;
+}
+
+function calculateItemsTotal(items) {
+    return (items || []).reduce((sum, it) => sum + (it.quantity * getPriceForSize(it.size)), 0);
+}
+
 // ===== Deadlines =====
 const DEADLINE_ORDER = new Date('2026-04-22T23:59:59+07:00');  // ตัดยอดสั่งจอง
 const DEADLINE_PAYMENT = new Date('2026-04-24T15:59:59+07:00'); // ตัดยอดแจ้งชำระ
