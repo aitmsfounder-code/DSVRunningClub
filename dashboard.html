@@ -97,9 +97,7 @@
                                     <th>#</th>
                                     <th>ชื่อ</th>
                                     <th>เบอร์โทร</th>
-                                    <th>สี</th>
-                                    <th>แบบแขน</th>
-                                    <th>ไซส์ x จำนวน</th>
+                                    <th>รายการเสื้อ</th>
                                     <th>รวม / ราคา</th>
                                     <th>วันที่จอง</th>
                                 </tr>
@@ -158,8 +156,6 @@
                     orders = (data || []).map(o => ({
                         name: o.name,
                         phone: o.phone || '-',
-                        color: o.color,
-                        sleeve: o.sleeve_type,
                         items: o.items || [],
                         total_quantity: o.total_quantity || 0,
                         total_price: o.total_price || 0,
@@ -184,7 +180,13 @@
                 const items = o.items || [];
                 if (items.length > 0) {
                     items.forEach(it => {
-                        rows.push({ color: o.color, sleeve: o.sleeve, size: it.size, quantity: it.quantity });
+                        // New format: color/sleeve per item
+                        rows.push({
+                            color: it.color || o.color,
+                            sleeve: it.sleeve_type || o.sleeve,
+                            size: it.size,
+                            quantity: it.quantity
+                        });
                     });
                 } else if (o.size) {
                     // Legacy single-item format
@@ -251,26 +253,30 @@
             document.getElementById('orderCount').textContent = orders.length + ' ออเดอร์';
 
             if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>ยังไม่มีรายการจอง</p></div></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>ยังไม่มีรายการจอง</p></div></td></tr>';
                 return;
             }
 
             tbody.innerHTML = orders.map((o, i) => {
-                const colorBadge = o.color === 'น้ำเงิน'
-                    ? '<span class="badge-sm badge-navy">น้ำเงิน</span>'
-                    : '<span class="badge-sm badge-white-color">ขาว</span>';
                 const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString('th-TH', {
                     day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                 }) : '-';
-                const itemsStr = (o.items || []).map(it => `${it.size}x${it.quantity}`).join(', ') || (o.size ? `${o.size}x${o.quantity}` : '-');
-                const tqty = o.total_quantity || (parseInt(o.quantity) || 1);
+                const items = o.items || [];
+                let itemsHtml = '-';
+                if (items.length > 0) {
+                    itemsHtml = items.map(it => {
+                        const c = it.color || o.color || '';
+                        const s = it.sleeve_type || o.sleeve || '';
+                        const badge = c === 'น้ำเงิน' ? 'badge-navy' : 'badge-white-color';
+                        return `<span class="badge-sm ${badge}">${c}</span> ${s} ${it.size} x${it.quantity}`;
+                    }).join('<br>');
+                }
+                const tqty = o.total_quantity || 0;
                 return `<tr>
                     <td>${i + 1}</td>
                     <td><strong>${o.name}</strong></td>
                     <td>${o.phone || '-'}</td>
-                    <td>${colorBadge}</td>
-                    <td>${o.sleeve}</td>
-                    <td>${itemsStr}</td>
+                    <td>${itemsHtml}</td>
                     <td>${tqty} ตัว<br><small style="color:var(--orange)">${(tqty * PRICE_PER_SHIRT).toLocaleString()}.-</small></td>
                     <td>${date}</td>
                 </tr>`;
