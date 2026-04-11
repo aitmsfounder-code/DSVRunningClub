@@ -13,3 +13,9 @@ Thumbs.db
 *.bak
 *.tmp
 แบบเสื้อ/
+
+# Docker volumes (local data)
+docker/volumes/
+
+# Local config with secrets
+.env.local

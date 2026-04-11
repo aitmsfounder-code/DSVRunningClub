@@ -1,10 +1,5 @@
 // ===== Running Club - Main App JS =====
-
-// ==========================================
-// Supabase Config
-// ==========================================
-const SUPABASE_URL = 'https://dbeifdqpsmfbsjhckank.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_2B1zgph7j1q1ypLRJi1PGw_tOirzbZj';
+// SUPABASE_URL and SUPABASE_ANON_KEY are loaded from config.js
 
 // ===== Supabase REST API Helper =====
 async function supabaseFetch(table, options = {}) {
